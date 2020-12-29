@@ -1,2 +1,2 @@
 # PTZ_Controller
-controller for PTZ Camera
+controller for Hikvision and Okav PTZ Camera
