@@ -1,2 +1,2 @@
 # PTZ_Controller
-controller for IP Camera
+controller for PTZ Camera
