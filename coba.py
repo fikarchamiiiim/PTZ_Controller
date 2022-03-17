@@ -1,8 +1,9 @@
 from ptz_controller import PtzHikvision, PtzOkav
 import time
+import env
 
-hv = PtzHikvision("192.168.88.64", "admin", "0r4150ml38u")
-# okv = PtzOkav("192.168.1.151", "admin", "Litbangau1")
+hv = PtzHikvision(env.hikvision['host'], env.hikvision["user"], env.hikvision['pass'])
+okav = PtzOkav(env.okav['host'], env.okav["user"], env.okav['pass'])
 #
 
 hv.focus_incr()
