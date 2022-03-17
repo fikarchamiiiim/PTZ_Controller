@@ -8,7 +8,12 @@ class PtzHikvision():
         self.password = password
 
         self.url = "http://{}@{}/ISAPI/PTZCtrl/channels/1/continuous".format(self.username, self.ip_add)
-        self.data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        self.url_focus = "http://{}@{}/ISAPI/System/Video/inputs/channels/1/focus".format(self.username, self.ip_add)
+
+        self.ptz_data = "<PTZData>{}</PTZData>"
+        self.focus_data = "<FocusData>{}</FocusData>"
+
+        self.form_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         self.stop = True
         # self.num_cam = 151
 
@@ -16,15 +21,31 @@ class PtzHikvision():
             "Content-Type":"application/xml"
         }
 
-    def func_start(self, data):
-        body= self.data + "<PTZData>{}</PTZData>".format(data)
-        r = requests.put(self.url, headers=self.headers, auth=HTTPDigestAuth(self.username, self.password), data=body)
+    def func_start(self, data, focus=False):
+        if focus:
+            url = self.url_focus
+            type_data = self.focus_data
+        else:
+            url = self.url
+            type_data = self.ptz_data
+            
+        body = self.form_data + type_data.format(data)
+        r = requests.put(url, headers=self.headers, auth=HTTPDigestAuth(self.username, self.password), data=body)
         self.stop = False
+        print(r.url)
+        print(body)
         print(r)
 
-    def func_stop(self):
-        body= self.data + "<PTZData><pan>0</pan><tilt>0</tilt></PTZData>"
-        r = requests.put(self.url, headers=self.headers, auth=HTTPDigestAuth(self.username, self.password), data=body)
+    def func_stop(self, focus=False):
+        if focus:
+            url = self.url_focus
+            data = "<FocusData><focus>0</focus></FocusData>"
+        else:
+            url = self.url
+            data = "<PTZData><pan>0</pan><tilt>0</tilt></PTZData>"
+
+        body = self.form_data + data
+        r = requests.put(url, headers=self.headers, auth=HTTPDigestAuth(self.username, self.password), data=body)
         self.stop = True
         print(r)
 
@@ -66,13 +87,13 @@ class PtzHikvision():
 
     def focus_incr(self, speed=60):
         if self.stop:
-            self.func_start("<FocusData><focus>{}</focus></FocusData>".format(speed))
+            self.func_start("<focus>{}</focus>".format(speed), focus=True)
         else:
             self.func_stop()
 
     def focus_decr(self, speed=60):
         if self.stop:
-            self.func_start("<FocusData><focus>-{}</focus></FocusData>".format(speed))
+            self.func_start("<focus>-{}</focus>".format(speed), focus=True)
         else:
             self.func_stop()
     
