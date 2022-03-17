@@ -54,13 +54,25 @@ class PtzHikvision():
     
     def zoom_in(self, speed=60):
         if self.stop:
-            self.func_start("<PTZData><zoom>{}</zoom></PTZData>".format(speed))
+            self.func_start("<zoom>{}</zoom>".format(speed))
         else:
             self.func_stop()
 
     def zoom_out(self, speed=60):
         if self.stop:
-            self.func_start("<PTZData><zoom>-{}</zoom></PTZData>".format(speed))
+            self.func_start("<zoom>-{}</zoom>".format(speed))
+        else:
+            self.func_stop()
+
+    def focus_incr(self, speed=60):
+        if self.stop:
+            self.func_start("<FocusData><focus>{}</focus></FocusData>".format(speed))
+        else:
+            self.func_stop()
+
+    def focus_decr(self, speed=60):
+        if self.stop:
+            self.func_start("<FocusData><focus>-{}</focus></FocusData>".format(speed))
         else:
             self.func_stop()
     
